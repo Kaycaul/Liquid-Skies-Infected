@@ -30,7 +30,7 @@ public class Weapon : MonoBehaviour {
         attacking = true;
         // knock the player back a bit
         Vector2 knockbackVector = (Vector2)transform.position - mousePos;
-        FindObjectOfType<PlayerController>().KnockBack(25 * knockbackVector.normalized);
+        FindObjectOfType<PlayerController>().KnockBack(40 * knockbackVector.normalized);
         // play the attack animation
         float t = 0;
         float startingAngle = transform.rotation.eulerAngles.z - swingArc / 2 * swingDirection;
