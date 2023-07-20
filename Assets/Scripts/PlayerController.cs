@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] float dashFullForce = 800f;
     [SerializeField] float dashChargeTime = 0.68f;
     [SerializeField] AnimationCurve dashForceCurve;
+    [SerializeField] DashMeter dashMeter;
 
     float speedMultiplier = 1f;
     bool dashing = false;
@@ -20,6 +21,7 @@ public class PlayerController : MonoBehaviour {
 
     void Awake() {
         rb = GetComponent<Rigidbody2D>();
+        dashMeter.gameObject.SetActive(false);
     }
 
     void Update() {
@@ -31,11 +33,13 @@ public class PlayerController : MonoBehaviour {
     async void Dash() {
         if (dashing) return;
         dashing = true;
+        dashMeter.gameObject.SetActive(true);
         // charge a dash
         speedMultiplier = 0.5f;
         float timeSpentCharging = 0;
         while (Input.GetKey(KeyCode.Space)) {
             timeSpentCharging += Time.deltaTime;
+            dashMeter.SetPercent(timeSpentCharging / dashChargeTime);
             await UniTask.Yield();
         }
         timeSpentCharging = Mathf.Min(timeSpentCharging, dashChargeTime);
@@ -47,6 +51,7 @@ public class PlayerController : MonoBehaviour {
         // reset control
         speedMultiplier = 1f;
         dashing = false;
+        dashMeter.gameObject.SetActive(false);
     }
 
     void FixedUpdate() {
