@@ -12,14 +12,19 @@ public class Weapon : MonoBehaviour {
     [SerializeField] SwordSwing swordSwing;
     [SerializeField] float knockbackForce = 2000f;
     [SerializeField] int damage = 1;
+    [SerializeField] float cooldownAfterThirdAttack = 1.8f;
 
     bool attacking = false;
     int swingDirection = -1;
     Vector2 mousePos;
+    int recentAttackCount = 0;
+    float timeOfLastAttack = 0;
 
     private void Update() {
         // point towards the mouse
         if (!attacking) PointTowardsMouse();
+        // reset attack cooldown
+        if (Time.time - timeOfLastAttack > cooldownAfterThirdAttack) recentAttackCount = 0;
     }
 
     private void PointTowardsMouse() {
@@ -30,17 +35,20 @@ public class Weapon : MonoBehaviour {
 
     public async void Attack() {
         if (attacking) return;
+        if (recentAttackCount > 2) return;
+        recentAttackCount++;
+        timeOfLastAttack = Time.time;
         attacking = true;
         // knock the player back a bit
         Vector2 knockbackVector = (Vector2)transform.position - mousePos;
         knockbackVector.Normalize();
-        FindObjectOfType<PlayerController>().KnockBack(40 * knockbackVector);
+        int knockbackAmount = 60 - (recentAttackCount * 40);
+        FindObjectOfType<PlayerController>().KnockBack(knockbackAmount * knockbackVector);
         // spawn the sword swing and assign its values
         SwordSwing newSwordSwing = Instantiate(swordSwing, transform.position, transform.rotation);
         newSwordSwing.transform.position += (Vector3)(-knockbackVector);
-        newSwordSwing.knockbackDirection = -knockbackVector;
+        newSwordSwing.knockback = -knockbackVector * knockbackForce;
         newSwordSwing.damage = damage;
-        newSwordSwing.knockbackForce = knockbackForce;
         // play the attack animation
         float t = 0;
         float startingAngle = transform.rotation.eulerAngles.z - swingArc / 2 * swingDirection;

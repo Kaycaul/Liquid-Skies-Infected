@@ -7,9 +7,8 @@ public class SwordSwing : MonoBehaviour {
 
     [SerializeField] float duration = 0.6f;
 
-    [HideInInspector] public float knockbackForce;
     [HideInInspector] public int damage;
-    [HideInInspector] public Vector2 knockbackDirection;
+    [HideInInspector] public Vector2 knockback;
 
     List<Collider2D> hitEnemies = new List<Collider2D>();
 
@@ -21,7 +20,7 @@ public class SwordSwing : MonoBehaviour {
     private void OnTriggerEnter2D(Collider2D other) {
         if (hitEnemies.Contains(other)) return;
         hitEnemies.Add(other);
-        other.GetComponent<Enemy>().Hit(damage, knockbackDirection * knockbackForce);
+        other.GetComponent<Enemy>().Hit(damage, knockback);
     }
 
 }
