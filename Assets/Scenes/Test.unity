@@ -1344,8 +1344,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 500
-  dashFullForce: 450
-  dashChargeTime: 0.4
+  dashFullForce: 750
+  dashChargeTime: 0.5
   dashForceCurve:
     serializedVersion: 2
     m_Curve:
