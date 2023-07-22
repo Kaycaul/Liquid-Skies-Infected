@@ -9,6 +9,9 @@ public class Weapon : MonoBehaviour {
     [SerializeField] AnimationCurve swingCurve;
     [SerializeField] float swingDuration = 1f;
     [SerializeField] float swingArc = 60f;
+    [SerializeField] SwordSwing swordSwing;
+    [SerializeField] float knockbackForce = 2000f;
+    [SerializeField] int damage = 1;
 
     bool attacking = false;
     int swingDirection = -1;
@@ -30,7 +33,14 @@ public class Weapon : MonoBehaviour {
         attacking = true;
         // knock the player back a bit
         Vector2 knockbackVector = (Vector2)transform.position - mousePos;
-        FindObjectOfType<PlayerController>().KnockBack(40 * knockbackVector.normalized);
+        knockbackVector.Normalize();
+        FindObjectOfType<PlayerController>().KnockBack(40 * knockbackVector);
+        // spawn the sword swing and assign its values
+        SwordSwing newSwordSwing = Instantiate(swordSwing, transform.position, transform.rotation);
+        newSwordSwing.transform.position += (Vector3)(-knockbackVector);
+        newSwordSwing.knockbackDirection = -knockbackVector;
+        newSwordSwing.damage = damage;
+        newSwordSwing.knockbackForce = knockbackForce;
         // play the attack animation
         float t = 0;
         float startingAngle = transform.rotation.eulerAngles.z - swingArc / 2 * swingDirection;
